@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">WeatherApp</string>
-    <string name="signDegree" translatable="false">25°С</string>
+    <string name="signDegree" translatable="false">24°С</string>
     <string name="city">Москва</string>
 </resources>
