@@ -1,9 +1,11 @@
 package ru.geekbrains;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.provider.ContactsContract;
@@ -14,12 +16,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
+    private static final int REQUEST_CODE_SECOND_ACTIVITY = 123;
     private enum StateParams {
             TEMPERATURE;
     }
 
     ImageView cityButton;
+    ImageView infoButton;
     TextView temperatureTextView;
+    TextView cityTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,18 +33,46 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, "Activity create", Toast.LENGTH_LONG).show();
         Log.d("activity status", "activity create");
 
-        temperatureTextView = findViewById(R.id.temperature);
-        cityButton = findViewById(R.id.cityButton);
+        findViews();
+        setClickListeners();
+
+
+
+    }
+
+    private void setClickListeners() {
         cityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                temperatureTextView.setText("23");
                 Intent intent = new Intent(MainActivity.this, CitiesActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_CODE_SECOND_ACTIVITY);
+
             }
         });
 
+        infoButton.setOnClickListener(v->{
+            String url = "https://ru.wikipedia.org/wiki/" + cityTextView.getText().toString();
+            Uri uri = Uri.parse(url);
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(browserIntent);
+        });
+    }
 
+    private void findViews() {
+        infoButton = findViewById(R.id.infoBtn);
+        cityTextView = findViewById(R.id.cityTextView);
+        temperatureTextView = findViewById(R.id.temperature);
+        cityButton = findViewById(R.id.cityButton);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_SECOND_ACTIVITY && resultCode == RESULT_OK) {
+            String city = data.getStringExtra(CitiesActivity.CITY);
+            cityTextView.setText(city);
+
+        }
     }
 
     @Override
