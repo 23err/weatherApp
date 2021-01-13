@@ -41,12 +41,14 @@
         android:id="@+id/weatherPic"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="48dp"
         android:src="@drawable/sun_cloud_rain"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintHorizontal_bias="0.329"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/city" />
+        app:layout_constraintTop_toBottomOf="@+id/city"
+        app:layout_constraintVertical_bias="0.009" />
 
     <TextView
         android:id="@+id/temperature"
@@ -57,10 +59,10 @@
         android:textSize="55sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/weatherPic"
-        app:layout_constraintVertical_bias="0.108" />
+        app:layout_constraintHorizontal_bias="0.314"
+        app:layout_constraintStart_toEndOf="@+id/weatherPic"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.498" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
