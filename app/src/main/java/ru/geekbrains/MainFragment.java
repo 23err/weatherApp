@@ -1,6 +1,7 @@
 package ru.geekbrains;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -39,6 +40,12 @@ public class MainFragment extends Fragment  implements Observer, PublisherGetter
 
         publisher = new Publisher();
         publisher.subscribe(this);
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            cityButton.setVisibility(View.INVISIBLE);
+            CitiesFragment citiesFragment = CitiesFragment.create(publisher);
+            getFragmentManager().beginTransaction().add(R.id.cities_container, citiesFragment).commit();
+        }
 
     }
 
