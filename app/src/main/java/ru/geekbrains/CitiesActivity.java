@@ -1,18 +1,25 @@
 package ru.geekbrains;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class CitiesActivity extends AppCompatActivity {
-
+    public static final String CITY = "city";
     private RecyclerView citiesRecycleView;
     private List<String> cities;
 
@@ -25,10 +32,11 @@ public class CitiesActivity extends AppCompatActivity {
         initData();
         setData();
 
+
     }
 
     private void setData() {
-        CityRecyclerViewAdapter cityRecyclerViewAdapter = new CityRecyclerViewAdapter(this, cities);
+        CityRecyclerViewAdapter cityRecyclerViewAdapter = new CityRecyclerViewAdapter(this, cities, new CityClickListener());
         citiesRecycleView.setAdapter(cityRecyclerViewAdapter);
     }
 
@@ -364,4 +372,18 @@ public class CitiesActivity extends AppCompatActivity {
     private void findViews() {
         citiesRecycleView = (RecyclerView) findViewById(R.id.citiesRecyclerView);
     }
+
+    class CityClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent();
+            TextView city = view.findViewById(R.id.cityTextView);
+
+            intent.putExtra(CitiesActivity.CITY, city.getText().toString());
+            setResult(RESULT_OK, intent);
+            finish();
+        }
+    }
 }
+

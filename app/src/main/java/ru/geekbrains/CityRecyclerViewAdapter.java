@@ -14,11 +14,12 @@ public class CityRecyclerViewAdapter extends RecyclerView.Adapter<CityViewHolder
 
     private List<String> citiesList;
     private LayoutInflater layoutInflater;
+    private View.OnClickListener onClickListener;
 
-    public CityRecyclerViewAdapter(Context context, List<String> data){
+    public CityRecyclerViewAdapter(Context context, List<String> data, View.OnClickListener onClickListener){
         citiesList = data;
         layoutInflater = LayoutInflater.from(context);
-
+        this.onClickListener = onClickListener;
     }
 
     @NonNull
@@ -26,7 +27,7 @@ public class CityRecyclerViewAdapter extends RecyclerView.Adapter<CityViewHolder
     public CityViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View view = layoutInflater.inflate(R.layout.city_recyclerview_item, parent, false);
-        return new CityViewHolder(view);
+        return new CityViewHolder(view, onClickListener);
     }
 
     @Override
