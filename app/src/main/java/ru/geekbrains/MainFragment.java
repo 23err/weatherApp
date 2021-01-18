@@ -7,6 +7,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +16,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MainFragment extends Fragment  implements Observer {
-    private static final int REQUEST_CODE_SECOND_ACTIVITY = 123;
+public class MainFragment extends Fragment  implements Observer, PublisherGetter {
+    private static int REQUEST_CODE_SECOND_ACTIVITY = 123;
+    private Publisher publisher;
 
     private ImageView cityButton;
     private ImageView infoButton;
@@ -33,14 +36,26 @@ public class MainFragment extends Fragment  implements Observer {
         super.onViewCreated(view, savedInstanceState);
         findViews(view);
         setClickListeners();
+
+        publisher = new Publisher();
+        publisher.subscribe(this);
+
     }
 
     private void setClickListeners() {
         cityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), CitiesActivity.class);
-                startActivityForResult(intent, REQUEST_CODE_SECOND_ACTIVITY);
+//                Intent intent = new Intent(getActivity(), CitiesActivity.class);
+//                startActivityForResult(intent, REQUEST_CODE_SECOND_ACTIVITY);
+
+                CitiesFragment citiesFragment = CitiesFragment.create(publisher);
+
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.addToBackStack("main");
+                ft.replace(R.id.frame_layout, citiesFragment);
+
+                ft.commit();
 
             }
         });
@@ -60,15 +75,6 @@ public class MainFragment extends Fragment  implements Observer {
         cityButton = view.findViewById(R.id.cityButton);
     }
 
-        @Override
-        public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_SECOND_ACTIVITY && resultCode == getActivity().RESULT_OK) {
-            String city = data.getStringExtra(CitiesFragment.CITY);
-            cityTextView.setText(city);
-
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -81,5 +87,10 @@ public class MainFragment extends Fragment  implements Observer {
     public void updateCity(String city) {
         cityTextView.setText(city);
 
+    }
+
+    @Override
+    public Publisher getPublisher() {
+        return publisher;
     }
 }

@@ -1,28 +1,47 @@
 package ru.geekbrains;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CitiesFragment extends Fragment {
 
     public static final String CITY = "city";
     private RecyclerView citiesRecycleView;
+    private TextView searchCityEditText;
     private List<String> cities;
+    private List<String> filterCities;
+    private Publisher publisher;
+    public static CitiesFragment create(Publisher publisher){
+        CitiesFragment citiesFragment = new CitiesFragment();
+        citiesFragment.setPublisher(publisher);
+        return citiesFragment;
+    }
 
     public CitiesFragment() {
         // Required empty public constructor
+    }
+
+    public void setPublisher(Publisher publisher){
+        this.publisher = publisher;
     }
 
     @Override
@@ -34,10 +53,30 @@ public class CitiesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         findViews(view);
         initData();
-        setData();
+        setData(cities);
+        setAction();
         super.onViewCreated(view, savedInstanceState);
+    }
 
+    private void setAction() {
+        searchCityEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void afterTextChanged(Editable editable) {
+                filterCities = cities.stream().filter(i -> i.toLowerCase().contains(searchCityEditText.getText().toString().toLowerCase())).collect(Collectors.toList());
+                setData(filterCities);
+            }
+        });
     }
 
     private void initData() {
@@ -371,11 +410,12 @@ public class CitiesFragment extends Fragment {
 
     private void findViews(View view) {
         citiesRecycleView = (RecyclerView) view.findViewById(R.id.citiesRecyclerView);
+        searchCityEditText = view.findViewById(R.id.searchCityEditText);
     }
 
 
 
-    private void setData() {
+    private void setData(List<String> cities) {
 
         CityRecyclerViewAdapter cityRecyclerViewAdapter = new CityRecyclerViewAdapter(getActivity(), cities, new CityClickListener());
         citiesRecycleView.setAdapter(cityRecyclerViewAdapter);
@@ -392,12 +432,9 @@ public class CitiesFragment extends Fragment {
 
         @Override
         public void onClick(View view) {
-            Intent intent = new Intent();
             TextView city = view.findViewById(R.id.cityTextView);
-
-            intent.putExtra(CitiesFragment.CITY, city.getText().toString());
-            getActivity().setResult(getActivity().RESULT_OK, intent);
-            getActivity().finish();
+            publisher.notify(city.getText().toString());
+            getFragmentManager().popBackStack();
         }
     }
 }

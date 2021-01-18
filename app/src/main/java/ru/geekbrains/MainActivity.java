@@ -15,10 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements PublisherGetter{
+public class MainActivity extends AppCompatActivity {
 
-
-    private Publisher publisher = new Publisher();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,12 +24,7 @@ public class MainActivity extends AppCompatActivity implements PublisherGetter{
         setContentView(R.layout.activity_main);
 
 
-
     }
 
 
-    @Override
-    public Publisher getPublisher() {
-        return publisher;
-    }
 }

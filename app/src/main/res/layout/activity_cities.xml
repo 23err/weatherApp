@@ -4,16 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CitiesActivity"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    tools:context=".CitiesActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/frame_layout">
+        android:layout_height="match_parent">
 
         <fragment
-            android:id="@+id/main_fragment"
             android:name="ru.geekbrains.CitiesFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
