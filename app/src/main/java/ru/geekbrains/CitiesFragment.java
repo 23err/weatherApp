@@ -47,6 +47,7 @@ public class CitiesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Override
@@ -55,6 +56,7 @@ public class CitiesFragment extends Fragment {
         initData();
         setData(cities);
         setAction();
+
         super.onViewCreated(view, savedInstanceState);
     }
 
