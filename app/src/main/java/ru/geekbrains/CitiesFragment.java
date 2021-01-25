@@ -412,7 +412,7 @@ public class CitiesFragment extends Fragment {
 
     private void findViews(View view) {
         citiesRecycleView = (RecyclerView) view.findViewById(R.id.citiesRecyclerView);
-        searchCityEditText = view.findViewById(R.id.searchCityEditText);
+        searchCityEditText = view.findViewById(R.id.find_tiet);
     }
 
 
