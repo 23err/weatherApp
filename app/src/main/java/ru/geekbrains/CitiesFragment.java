@@ -17,6 +17,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -434,9 +437,16 @@ public class CitiesFragment extends Fragment {
 
         @Override
         public void onClick(View view) {
-            TextView city = view.findViewById(R.id.cityTextView);
-            publisher.notify(city.getText().toString());
-            getFragmentManager().popBackStack();
+            TextView cityTV = view.findViewById(R.id.cityTextView);
+            String city = cityTV.getText().toString();
+
+            Snackbar.make(view, "Вы выбрали город " + city + "?", BaseTransientBottomBar.LENGTH_INDEFINITE)
+            .setAction("Принять", v->{
+                publisher.notify(city);
+                getFragmentManager().popBackStack();
+            }).show();
+
+
         }
     }
 }
