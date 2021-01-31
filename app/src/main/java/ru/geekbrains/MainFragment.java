@@ -1,11 +1,13 @@
 package ru.geekbrains;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -105,7 +108,7 @@ public class MainFragment extends Fragment implements Observer, PublisherGetter 
     private void updateTemperature(String city) {
         try {
             URL uri = new URL(WEATHER_URL.replace("{city}", city) + API_KEY);
-            Handler handler = new Handler();
+            Handler handler = new Handler(Looper.getMainLooper());
             new Thread(new Runnable() {
                 @RequiresApi(api = Build.VERSION_CODES.N)
                 @Override
@@ -128,6 +131,23 @@ public class MainFragment extends Fragment implements Observer, PublisherGetter 
 
                     } catch (FileNotFoundException e){
                         Log.d("file not found", "run: Такого города нет");
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                builder.setTitle("Ошибка");
+                                builder.setMessage("Не удалось получить данные для \""+ city + "\"");
+                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.dismiss();
+                                    }
+                                });
+                                AlertDialog alertDialog = builder.create();
+                                alertDialog.show();
+                            }
+                        });
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     } finally {
