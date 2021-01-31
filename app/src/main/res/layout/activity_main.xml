@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
+    android:id="@+id/root_layout"
     >
 
     <FrameLayout
@@ -18,11 +19,7 @@
         android:id="@+id/frame_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-<!--        <fragment-->
-<!--            android:id="@+id/main_fragment"-->
-<!--            android:name="ru.geekbrains.MainFragment"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent" />-->
+
     </FrameLayout>
 
 </LinearLayout>

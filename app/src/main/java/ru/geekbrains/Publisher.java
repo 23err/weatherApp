@@ -1,9 +1,10 @@
 package ru.geekbrains;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Publisher {
+public class Publisher implements Serializable {
     private List<Observer> observers;
 
     public Publisher() {

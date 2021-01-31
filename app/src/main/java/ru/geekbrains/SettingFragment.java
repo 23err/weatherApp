@@ -1,5 +1,6 @@
 package ru.geekbrains;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -49,8 +50,9 @@ public class SettingFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 setDarkTheme(b);
-
+                getActivity().setResult(Activity.RESULT_OK);
                 getActivity().recreate();
+
             }
         });
     }
@@ -73,8 +75,6 @@ public class SettingFragment extends Fragment {
         SharedPreferences.Editor editor = sp.edit();
         editor.putBoolean(IS_DARK_THEME, isDarkTheme);
         editor.apply();
-
-
 
     }
 

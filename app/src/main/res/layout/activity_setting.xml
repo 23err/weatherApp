@@ -4,9 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    tools:context=".CitiesActivity"
-    android:id="@+id/cities_fragment_container">
+    android:id="@+id/setting_layout"
+    tools:context=".SettingActivity">
 
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:name="ru.geekbrains.SettingFragment" />
 
 </FrameLayout>
