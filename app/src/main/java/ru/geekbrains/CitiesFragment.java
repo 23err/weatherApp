@@ -17,6 +17,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,12 +55,16 @@ public class CitiesFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         findViews(view);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         initData();
         setData(cities);
         setAction();
-
-        super.onViewCreated(view, savedInstanceState);
     }
 
     private void setAction() {
@@ -412,7 +419,7 @@ public class CitiesFragment extends Fragment {
 
     private void findViews(View view) {
         citiesRecycleView = (RecyclerView) view.findViewById(R.id.citiesRecyclerView);
-        searchCityEditText = view.findViewById(R.id.searchCityEditText);
+        searchCityEditText = view.findViewById(R.id.find_tiet);
     }
 
 
@@ -426,7 +433,6 @@ public class CitiesFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         return inflater.inflate(R.layout.fragment_citites, container, false);
     }
 
@@ -434,9 +440,16 @@ public class CitiesFragment extends Fragment {
 
         @Override
         public void onClick(View view) {
-            TextView city = view.findViewById(R.id.cityTextView);
-            publisher.notify(city.getText().toString());
-            getFragmentManager().popBackStack();
+            TextView cityTV = view.findViewById(R.id.cityTextView);
+            String city = cityTV.getText().toString();
+
+            Snackbar.make(view, "Вы выбрали город " + city + "?", BaseTransientBottomBar.LENGTH_INDEFINITE)
+            .setAction("Принять", v->{
+                publisher.notify(city);
+                getFragmentManager().popBackStack();
+            }).show();
+
+
         }
     }
 }
