@@ -90,6 +90,7 @@ public class CitiesFragment extends Fragment {
 
     private void initData() {
         String[] citiesArr = {
+                "Город для ошибки",
                 "Абакан",
                 "Азов",
                 "Александров",

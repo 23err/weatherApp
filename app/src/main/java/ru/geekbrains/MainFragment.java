@@ -3,17 +3,19 @@ package ru.geekbrains;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -21,11 +23,28 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.stream.Collectors;
+
+import javax.net.ssl.HttpsURLConnection;
+
+import ru.geekbrains.model.WeatherRequest;
 
 public class MainFragment extends Fragment implements Observer, PublisherGetter {
     private static int REQUEST_CODE_SECOND_ACTIVITY = 123;
+    private static final String WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather?q={city}&appid=";
+    private static final String API_KEY = "987da5318dced5efcd4845fd60160afd";
+
+
     private Publisher publisher;
 
     private ImageView cityButton;
@@ -78,6 +97,64 @@ public class MainFragment extends Fragment implements Observer, PublisherGetter 
         setPublisher();
 
         changeViewInLandscapeOrientation();
+        
+        updateTemperature(currentCity);
+
+    }
+
+    private void updateTemperature(String city) {
+        try {
+            URL uri = new URL(WEATHER_URL.replace("{city}", city) + API_KEY);
+            Handler handler = new Handler();
+            new Thread(new Runnable() {
+                @RequiresApi(api = Build.VERSION_CODES.N)
+                @Override
+                public void run() {
+                    HttpsURLConnection urlConnection = null;
+                    try {
+                        urlConnection = (HttpsURLConnection) uri.openConnection();
+                        urlConnection.setRequestMethod("GET");
+                        urlConnection.setReadTimeout(10000);
+                        BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                        String result = getLines(in);
+                        Gson gson = new Gson();
+                        WeatherRequest weatherRequest = gson.fromJson(result, WeatherRequest.class);
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                displayWeather(weatherRequest, city);
+                            }
+                        });
+
+                    } catch (FileNotFoundException e){
+                        Log.d("file not found", "run: Такого города нет");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } finally {
+                        if (urlConnection != null) {
+                            urlConnection.disconnect();
+                        }
+                    }
+                }
+            }).start();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void displayWeather(WeatherRequest weatherRequest, String city) {
+        Log.d("weatherResult", weatherRequest.getName());
+        currentCity = city;
+        cityTextView.setText(currentCity);
+        temperatureTextView.setText(String.valueOf(weatherRequest.getMain().getTemp()));
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private String getLines(BufferedReader in) {
+        return in.lines().collect(Collectors.joining("\n"));
 
     }
 
@@ -164,7 +241,7 @@ public class MainFragment extends Fragment implements Observer, PublisherGetter 
 
     @Override
     public void updateCity(String city) {
-        cityTextView.setText(city);
+        updateTemperature(city);
         Log.d("test123", "change city");
         Log.d("test123", city);
 
