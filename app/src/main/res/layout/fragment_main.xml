@@ -20,14 +20,17 @@
     <TextView
         android:id="@+id/cityTextView"
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_marginStart="20dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:ellipsize="end"
         android:text="@string/city"
-        android:textSize="35sp"
+        android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="@+id/cityButton"
-        app:layout_constraintStart_toEndOf="@+id/cityButton" />
+        app:layout_constraintStart_toEndOf="@+id/cityButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
-        <ImageView
+    <ImageView
             android:id="@+id/settingBtn"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -40,22 +43,25 @@
         android:id="@+id/temperature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="104dp"
         android:text="@string/signDegree"
         android:textSize="55sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.499"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/days_rv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/temperature" />
-
 
     <ImageView
         android:id="@+id/infoBtn"

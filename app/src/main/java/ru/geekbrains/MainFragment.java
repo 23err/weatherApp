@@ -1,5 +1,6 @@
 package ru.geekbrains;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -39,12 +40,16 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLHandshakeException;
 
 import ru.geekbrains.model.WeatherRequest;
 
 public class MainFragment extends Fragment implements Observer, PublisherGetter {
+    private final static int SETTING_ACTIVITY_CODE = 7777;
+    public final static String CELCIUS = " C°";
+    public static final int CITIES_ACTIVITY_CODE = 1111;
     private static int REQUEST_CODE_SECOND_ACTIVITY = 123;
-    private static final String WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather?q={city}&appid=";
+    private static final String WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather?q={city}&lang=ru&units=metric&appid=";
     private static final String API_KEY = "987da5318dced5efcd4845fd60160afd";
 
 
@@ -86,12 +91,6 @@ public class MainFragment extends Fragment implements Observer, PublisherGetter 
         super.onViewCreated(view, savedInstanceState);
 
         findViews(view);
-
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
         setClickListeners();
 
         initData();
@@ -100,8 +99,14 @@ public class MainFragment extends Fragment implements Observer, PublisherGetter 
         setPublisher();
 
         changeViewInLandscapeOrientation();
-        
+        Log.d("onViewCreated", "onViewCreated: mainfragment");
         updateTemperature(currentCity);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
 
     }
 
@@ -129,14 +134,29 @@ public class MainFragment extends Fragment implements Observer, PublisherGetter 
                             }
                         });
 
-                    } catch (FileNotFoundException e){
+                    } catch (SSLHandshakeException e) {
+                        Log.d("Соединение", "Возникла проблема с подключением к сетевым ресурсам.");
+                        handler.post(() -> {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                            builder.setTitle("Ошибка");
+                            builder.setMessage("Не можем подключиться к сервисам, проверьте интернет подключение.");
+                            builder.setPositiveButton("OK", ((dialogInterface, i) -> dialogInterface.dismiss()));
+                            AlertDialog alert = builder.create();
+                            alert.show();
+
+                            currentCity = "";
+                            temperatureTextView.setText("--" + CELCIUS);
+                            cityTextView.setText(currentCity);
+
+                        });
+                    } catch (FileNotFoundException e) {
                         Log.d("file not found", "run: Такого города нет");
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
                                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                                 builder.setTitle("Ошибка");
-                                builder.setMessage("Не удалось получить данные для \""+ city + "\"");
+                                builder.setMessage("Не удалось получить данные для \"" + city + "\"");
                                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -168,7 +188,7 @@ public class MainFragment extends Fragment implements Observer, PublisherGetter 
         Log.d("weatherResult", weatherRequest.getName());
         currentCity = city;
         cityTextView.setText(currentCity);
-        temperatureTextView.setText(String.valueOf(weatherRequest.getMain().getTemp()));
+        temperatureTextView.setText(String.valueOf(weatherRequest.getMain().getTemp()) + CELCIUS);
 
     }
 
@@ -193,7 +213,8 @@ public class MainFragment extends Fragment implements Observer, PublisherGetter 
             CitiesFragment cf = CitiesFragment.create(getPublisher());
             FragmentTransaction ft = getFragmentManager().beginTransaction();
             ft.addToBackStack("main");
-            ft.add(R.id.cities_container, cf);
+            ft.replace(R.id.cities_container, cf);
+            ft.replace(R.id.frame_layout, this);
             ft.commit();
 
         }
@@ -222,6 +243,10 @@ public class MainFragment extends Fragment implements Observer, PublisherGetter 
             @Override
             public void onClick(View view) {
                 CitiesFragment citiesFragment = CitiesFragment.create(publisher);
+//                Intent intent = new Intent(getContext(), CitiesActivity.class);
+//                intent.putExtra("publisher", getPublisher());
+//                startActivity(intent);
+
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.addToBackStack("main");
                 ft.add(R.id.frame_layout, citiesFragment);
@@ -239,12 +264,28 @@ public class MainFragment extends Fragment implements Observer, PublisherGetter 
         });
 
         settingBtn.setOnClickListener(l -> {
-            SettingFragment sf = new SettingFragment();
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            ft.addToBackStack("main");
-            ft.add(R.id.frame_layout, sf);
-            ft.commit();
+//            SettingFragment sf = new SettingFragment();
+//            FragmentTransaction ft = getFragmentManager().beginTransaction();
+//            ft.addToBackStack("main");
+//            ft.add(R.id.frame_layout, sf);
+//            ft.commit();
+            Intent intent = new Intent(getContext(), SettingActivity.class);
+            startActivityForResult(intent, SETTING_ACTIVITY_CODE);
+
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        switch (requestCode) {
+            case SETTING_ACTIVITY_CODE: {
+                getActivity().recreate();
+                break;
+            }
+
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+
     }
 
     private void findViews(View view) {

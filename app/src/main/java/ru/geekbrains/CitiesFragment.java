@@ -1,6 +1,7 @@
 package ru.geekbrains;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -56,6 +57,7 @@ public class CitiesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         findViews(view);
     }
 
@@ -443,12 +445,14 @@ public class CitiesFragment extends Fragment {
         public void onClick(View view) {
             TextView cityTV = view.findViewById(R.id.cityTextView);
             String city = cityTV.getText().toString();
-
-            Snackbar.make(view, "Вы выбрали город " + city + "?", BaseTransientBottomBar.LENGTH_INDEFINITE)
-            .setAction("Принять", v->{
-                publisher.notify(city);
+            publisher.notify(city);
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
                 getFragmentManager().popBackStack();
-            }).show();
+            }
+//            Snackbar.make(view, "Вы выбрали город " + city + "?", BaseTransientBottomBar.LENGTH_INDEFINITE)
+//            .setAction("Принять", v->{
+//
+//            }).show();
 
 
         }

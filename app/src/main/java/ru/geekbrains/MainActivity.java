@@ -18,7 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BasicActivity {
 
 
     @Override
@@ -35,24 +35,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
 
-        checkDarkTheme();
-
-
-    }
-
-
-    private void checkDarkTheme() {
-        if (isDarkTheme()) {
-            setTheme(R.style.AppDarkTheme);
-        } else {
-            setTheme(R.style.AppTheme);
-        }
-    }
-
-
-    protected boolean isDarkTheme() {
-        SharedPreferences sp = getSharedPreferences(SettingFragment.NAME_SHARED_PREFERENCE, MODE_PRIVATE);
-        return sp.getBoolean(SettingFragment.IS_DARK_THEME, false);
     }
 
 
